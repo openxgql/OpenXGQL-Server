@@ -1,0 +1,156 @@
+flashlarry.duckdns.org {
+	encode zstd gzip
+	log {
+		output file /var/log/caddy/flashlarry-access.log {
+			mode 0600
+			roll_size 20MiB
+			roll_keep 5
+			roll_keep_for 168h
+		}
+		format filter {
+			wrap json
+			fields {
+				request>headers delete
+				request>uri regexp "[?].*" ""
+				resp_headers delete
+				user_id delete
+			}
+		}
+	}
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy no-referrer
+	}
+	handle /admin {
+		redir /admin/ 308
+	}
+	handle_path /admin/* {
+		header X-Frame-Options DENY
+		reverse_proxy 127.0.0.1:8084
+	}
+	handle /healthz {
+		reverse_proxy 127.0.0.1:8080
+	}
+	handle /i/api/graphql/* {
+		reverse_proxy 127.0.0.1:8080
+	}
+	handle /graphql/* {
+		reverse_proxy 127.0.0.1:8080
+	}
+	handle /oauth2/token {
+		reverse_proxy 127.0.0.1:8080
+	}
+	handle /1.1/guest/activate.json {
+		reverse_proxy 127.0.0.1:8080
+	}
+	handle /1.1/onboarding/task.json {
+		reverse_proxy 127.0.0.1:8080
+	}
+	handle /1.1/account/update_profile.json {
+		reverse_proxy 127.0.0.1:8080
+	}
+	handle /1.1/account/update_profile_image.json {
+		reverse_proxy 127.0.0.1:8080
+	}
+	handle /i/media/* {
+		reverse_proxy 127.0.0.1:8080
+	}
+	handle /1.1/media/metadata/create.json {
+		reverse_proxy 127.0.0.1:8080
+	}
+	handle /1.1/media/upload.json {
+		reverse_proxy 127.0.0.1:8080
+	}
+	handle /media/* {
+		reverse_proxy 127.0.0.1:8080
+	}
+	handle /web/auth/* {
+		reverse_proxy 127.0.0.1:8080
+	}
+	handle /1.1/account/logout.json {
+		reverse_proxy 127.0.0.1:8080
+	}
+	handle /1.1/account/multi/logout_all.json {
+		reverse_proxy 127.0.0.1:8080
+	}
+	handle /1.1/account/settings.json {
+		reverse_proxy 127.0.0.1:8080
+	}
+	handle /1.1/flow/viewer.json {
+		reverse_proxy 127.0.0.1:8080
+	}
+	handle /1.1/graphql/viewer_context.json {
+		reverse_proxy 127.0.0.1:8080
+	}
+	handle /2/guide.json {
+		reverse_proxy 127.0.0.1:8080
+	}
+	handle /fleets/v1/fleetline {
+		reverse_proxy 127.0.0.1:8080
+	}
+	handle /1.1/help/settings.json {
+		reverse_proxy 127.0.0.1:8080
+	}
+	handle /1.1/users/report_spam.json {
+		reverse_proxy 127.0.0.1:8080
+	}
+	handle /web/reports {
+		reverse_proxy 127.0.0.1:8080
+	}
+	handle /ads/click/* {
+		reverse_proxy 127.0.0.1:8080
+	}
+	handle /1.1/* {
+		respond "unsupported API route" 404
+	}
+	handle /i/api/* {
+		respond "unsupported API route" 404
+	}
+	handle /2/* {
+		respond "unsupported API route" 404
+	}
+	handle /fleets/* {
+		respond "unsupported API route" 404
+	}
+	handle /x-web/* {
+		root * /opt/flashlarry/web
+		file_server
+	}
+	@webLogin path /login /i/flow/login /i/jf/onboarding/web /signup
+	handle @webLogin {
+		root * /opt/flashlarry/web
+		rewrite * /login.html
+		file_server
+	}
+	handle {
+		root * /opt/flashlarry/web
+		try_files {path} /index.html
+		file_server
+	}
+}
+
+flashlarry.duckdns.org:2600 {
+	encode zstd gzip
+	log {
+		output file /var/log/caddy/flashlarry-admin-access.log {
+			mode 0600
+			roll_size 10MiB
+			roll_keep 3
+		}
+		format filter {
+			wrap json
+			fields {
+				request>headers delete
+				request>uri regexp "[?].*" ""
+				resp_headers delete
+				user_id delete
+			}
+		}
+	}
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy no-referrer
+		X-Frame-Options DENY
+	}
+	reverse_proxy 127.0.0.1:8084
+}

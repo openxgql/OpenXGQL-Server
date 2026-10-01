@@ -1,0 +1,24 @@
+[Unit]
+Description=FlashLarry social service
+After=network-online.target flashlarry-users.service flashlarry-tweets.service postgresql.service redis-server.service
+Requires=flashlarry-users.service flashlarry-tweets.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=flashlarry
+Group=flashlarry
+EnvironmentFile=/etc/flashlarry/common.env
+Environment=LISTEN_ADDR=127.0.0.1:8083
+ExecStart=/opt/flashlarry/bin/social
+Restart=on-failure
+RestartSec=2
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

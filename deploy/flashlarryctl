@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  echo 'Usage: flashlarryctl register | login | logout | profile | username | verify' >&2
+  exit 2
+}
+
+[[ $# -eq 1 ]] || usage
+if [[ $EUID -ne 0 ]]; then
+  echo 'Run as root on the server' >&2
+  exit 1
+fi
+case "$1" in
+  register)
+    read -r -p 'Screen name: ' screen_name
+    read -r -p 'Display name: ' display_name
+    read -r -s -p 'Password: ' password
+    printf '\n'
+    payload=$(printf '%s\0%s\0%s' "$screen_name" "$display_name" "$password" | python3 -c 'import json,sys; v=sys.stdin.buffer.read().decode().split("\0"); print(json.dumps({"screen_name":v[0],"name":v[1],"password":v[2]}))')
+    curl -fsS -H 'Content-Type: application/json' --data "$payload" http://127.0.0.1:8081/auth/register | python3 -m json.tool
+    ;;
+  login)
+    read -r -p 'Screen name: ' screen_name
+    read -r -s -p 'Password: ' password
+    printf '\n'
+    payload=$(printf '%s\0%s' "$screen_name" "$password" | python3 -c 'import json,sys; v=sys.stdin.buffer.read().decode().split("\0"); print(json.dumps({"screen_name":v[0],"password":v[1]}))')
+    curl -fsS -H 'Content-Type: application/json' --data "$payload" http://127.0.0.1:8081/auth/login | python3 -m json.tool
+    ;;
+  logout)
+    read -r -s -p 'Session token: ' token
+    printf '\n'
+    curl -fsS -X POST -H "Authorization: Bearer $token" http://127.0.0.1:8081/auth/logout | python3 -m json.tool
+    ;;
+  profile)
+    read -r -p 'User ID: ' user_id
+    read -r -p 'Display name: ' display_name
+    read -r -p 'Bio (may be empty): ' bio
+    read -r -p 'HTTPS avatar URL (may be empty): ' avatar_url
+    [[ $user_id =~ ^[0-9]+$ ]] || { echo 'Invalid user ID' >&2; exit 1; }
+    payload=$(printf '%s\0%s\0%s' "$display_name" "$bio" "$avatar_url" | python3 -c 'import json,sys; v=sys.stdin.buffer.read().decode().split("\0"); print(json.dumps({"name":v[0],"bio":v[1],"avatar_url":v[2]}))')
+    curl -fsS -X PATCH -H 'Content-Type: application/json' --data "$payload" "http://127.0.0.1:8081/users/$user_id" | python3 -m json.tool
+    ;;
+  username)
+    read -r -p 'User ID: ' user_id
+    read -r -p 'New username: ' screen_name
+    [[ $user_id =~ ^[0-9]+$ ]] || { echo 'Invalid user ID' >&2; exit 1; }
+    payload=$(printf '%s' "$screen_name" | python3 -c 'import json,sys; print(json.dumps({"screen_name":sys.stdin.read()}))')
+    curl -fsS -X PATCH -H 'Content-Type: application/json' --data "$payload" "http://127.0.0.1:8081/users/$user_id" | python3 -m json.tool
+    ;;
+  verify)
+    read -r -p 'User ID: ' user_id
+    read -r -p 'Show verification badge? (yes/no): ' answer
+    [[ $user_id =~ ^[0-9]+$ ]] || { echo 'Invalid user ID' >&2; exit 1; }
+    case "$answer" in yes) verified=true ;; no) verified=false ;; *) echo 'Answer yes or no' >&2; exit 1 ;; esac
+    curl -fsS -X PATCH -H 'Content-Type: application/json' --data "{\"verified\":$verified}" "http://127.0.0.1:8081/users/$user_id" | python3 -m json.tool
+    ;;
+  *) usage ;;
+esac

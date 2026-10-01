@@ -1,0 +1,25 @@
+[Unit]
+Description=Flashlarry tweet service
+After=network-online.target postgresql.service redis-server.service
+Wants=network-online.target
+Requires=postgresql.service redis-server.service
+
+[Service]
+Type=simple
+User=flashlarry
+Group=flashlarry
+EnvironmentFile=/etc/flashlarry/common.env
+Environment=LISTEN_ADDR=127.0.0.1:8082
+ExecStart=/opt/flashlarry/bin/tweets
+Restart=on-failure
+RestartSec=2
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ReadWritePaths=/opt/flashlarry/media
+ProtectHome=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

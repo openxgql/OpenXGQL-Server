@@ -1,0 +1,23 @@
+[Unit]
+Description=Flashlarry Telegram registration bot
+After=network-online.target redis-server.service flashlarry-users.service
+Wants=network-online.target
+Requires=redis-server.service flashlarry-users.service
+
+[Service]
+Type=simple
+User=flashlarry
+Group=flashlarry
+EnvironmentFile=/etc/flashlarry/common.env
+ExecStart=/opt/flashlarry/bin/bot
+Restart=on-failure
+RestartSec=3
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+UMask=0077
+
+[Install]
+WantedBy=multi-user.target

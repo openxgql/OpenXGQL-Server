@@ -1,0 +1,14 @@
+/bin/
+/build/
+/staging/
+/web/
+/media/
+*.env
+!*.env.example
+*credentials*.txt
+operator.json
+node_modules/
+reference/relay-schema.json
+reference/coverage.json
+__pycache__/
+*.log
