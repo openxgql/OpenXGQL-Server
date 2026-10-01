@@ -1,11 +1,18 @@
 OpenXGQL-Server (FlashLarry)
 
+Copyright (c) 2026 OpenXGQL contributors.
+OpenXGQL-Server's own code is licensed under the MIT License in LICENSE.
+
 The recommendation core incorporates a Go translation of sources from
 xai-org/x-algorithm, commit b79b947ce9283c786822274ef8fe208c33c585b2,
 under the Apache License 2.0. Original source fixtures and their license are
 preserved in internal/xalgorithm/upstream/.
+The MIT license for this project does not replace the Apache 2.0 license or
+attribution obligations for the retained upstream material and adapted portions.
 
 The operation registry contains protocol metadata derived from
 fa0311/TwitterInternalAPIDocument and captured public X Relay descriptors.
 X/Twitter names and trademarks belong to their respective owners.
+Screenshots illustrate the running patched X interface; upstream interface
+assets and third-party content retain their respective ownership.
 This project is independent and is not affiliated with X or xAI.

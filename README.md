@@ -1,9 +1,37 @@
 # OpenXGQL-Server
 
+[![CI](https://img.shields.io/github/actions/workflow/status/openxgql/OpenXGQL-Server/go.yml?branch=main&style=flat-square&label=CI)](https://github.com/openxgql/OpenXGQL-Server/actions/workflows/go.yml)
+[![MIT License](https://img.shields.io/badge/license-MIT-22c55e?style=flat-square)](LICENSE)
+[![Go](https://img.shields.io/badge/Go-1.26%2B-00ADD8?style=flat-square&logo=go&logoColor=white)](go.mod)
+[![GraphQL](https://img.shields.io/badge/API-GraphQL-E10098?style=flat-square&logo=graphql&logoColor=white)](docs/compatibility.md)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat-square&logo=redis&logoColor=white)](https://redis.io/)
+[![Caddy HTTPS](https://img.shields.io/badge/Caddy-HTTPS-1F88C0?style=flat-square&logo=caddy&logoColor=white)](deploy/Caddyfile)
+[![Telegram Bot](https://img.shields.io/badge/Telegram-Bot-26A5E4?style=flat-square&logo=telegram&logoColor=white)](cmd/bot)
+[![Self hosted](https://img.shields.io/badge/deployment-self--hosted-8B5CF6?style=flat-square)](#deploy-on-ubuntu)
+[![Experimental](https://img.shields.io/badge/status-experimental-F59E0B?style=flat-square)](docs/compatibility.md)
+
 Experimental Go backend used by **FlashLarry**. It implements local social
 network storage and responses shaped for captured X GraphQL operations.
 Postgres stores accounts and social data; Redis stores sessions, codes and
 feed snapshots; Caddy terminates HTTPS.
+
+## Screenshots
+
+The FlashLarry web interface connects the patched X client to OpenXGQL-Server.
+Captured from the running deployment on October 1, 2026.
+
+### Timeline and navigation
+
+![FlashLarry timeline with the composer, reactions and left navigation](docs/screenshots/home.png)
+
+### Profile
+
+![FlashLarry profile showing account details, verification and posts](docs/screenshots/profile.png)
+
+### Login
+
+![FlashLarry login form with Telegram code authentication](docs/screenshots/login.png)
 
 ## Features
 
@@ -121,6 +149,9 @@ input validation and response shape before extending compatibility.
 
 ## License
 
-Own code and the attributed recommendation sources use Apache 2.0.
-See [LICENSE](LICENSE) and [NOTICE](NOTICE). This is an independent experimental
-project, not an official X service.
+OpenXGQL-Server's own code is licensed under the [MIT License](LICENSE).
+The retained x-algorithm source fixtures and upstream portions of the
+recommendation adaptation keep their Apache 2.0 terms; see
+[NOTICE](NOTICE) and [the upstream license](internal/xalgorithm/upstream/LICENSE).
+X/Twitter interface assets retain their upstream ownership. This is an
+independent experimental project, not an official X service.

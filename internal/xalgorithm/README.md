@@ -4,6 +4,8 @@ Adapted from [xai-org/x-algorithm](https://github.com/xai-org/x-algorithm),
 commit `b79b947ce9283c786822274ef8fe208c33c585b2`, under Apache 2.0.
 The original license and Rust scoring sources are preserved in `upstream/`.
 This Go translation and the FlashLarry integration were added on 2026-10-01.
+OpenXGQL's own additions are MIT licensed; upstream material and adapted
+portions retain their Apache 2.0 terms and attribution. See the root `NOTICE`.
 
 `scoring.go` ports the published weighted probability value model, mutual-follow
 reply bonuses, negative-score offset/inversion, author diversity, out-of-network
